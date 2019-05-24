@@ -12,8 +12,10 @@ bests = []          # Estrutura para armazenar os melhores fitness de cada execu
 if not os.path.exists(diretorio):
     os.makedirs(diretorio)
 
+num_exec = 10
+
 # Para cada execução
-for t in range(1, 11):
+for t in range(1, num_exec + 1):
     bests.append({5: [], 10: []})   # Cria as listas da execução de cada número de gerações máximas
 
     for max_generations in [5, 10]:
@@ -50,7 +52,7 @@ for best_exec in bests:
 for generation in [5, 10]:
     media = []
     for i in range(generation):
-        media.append(fitness_sum[generation][i] / 10)
+        media.append(fitness_sum[generation][i] / num_exec)
 
     val_eixo_x = [i for i in range(1, generation + 1)]
 

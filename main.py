@@ -13,12 +13,13 @@ if not os.path.exists(diretorio):
     os.makedirs(diretorio)
 
 num_exec = 10
+generations = [5, 20]
 
 # Para cada execução
 for t in range(1, num_exec + 1):
-    bests.append({5: [], 10: []})   # Cria as listas da execução de cada número de gerações máximas
+    bests.append({generation: [] for generation in generations})   # Cria as listas da execução de cada número de gerações máximas
 
-    for max_generations in [5, 10]:
+    for max_generations in generations:
         # Abre arquivo
         arq = open(f"{diretorio}/{Populacao.n_ind}i_{max_generations}g_{t}exec.csv", "wt")
 
@@ -39,17 +40,17 @@ for t in range(1, num_exec + 1):
         arq.close()
 
 # Estrutura que armazena a soma de cada geração de cada execução
-fitness_sum = {5: [0] * 5, 10: [0] * 10}
+fitness_sum = {generation: [0] * generation for generation in generations}
 
 # Faz as somas
 for best_exec in bests:
-    for generation in [5, 10]:
+    for generation in generations:
         for i in range(generation):
             fitness_sum[generation][i] += best_exec[generation][i]
 
 
 # Calcula médias e plota
-for generation in [5, 10]:
+for generation in generations:
     media = []
     for i in range(generation):
         media.append(fitness_sum[generation][i] / num_exec)

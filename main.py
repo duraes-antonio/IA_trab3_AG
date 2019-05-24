@@ -50,7 +50,7 @@ for best_exec in bests:
 for generation in [5, 10]:
     media = []
     for i in range(generation):
-        media.append(fitness_sum[generation][i] / generation)
+        media.append(fitness_sum[generation][i] / 10)
 
     val_eixo_x = [i for i in range(1, generation + 1)]
 
@@ -62,6 +62,6 @@ for generation in [5, 10]:
 
     # Marque os valores de fitness, forma destacada (em vermelho) no gráfico
     for i in range(len(media)):
-        pl.text(val_eixo_x[i], media[i], f"{media[i]:.4}", color="red", fontsize=10)
+        pl.text(val_eixo_x[i], media[i], f"{media[i]:.5}", color="red", fontsize=10)
 
     pl.show()

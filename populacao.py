@@ -5,21 +5,40 @@ from individuo import Individuo
 
 class Populacao(object):
     n_ind = 4
+    elite = None
 
     def __init__(self):
         # Gera os indiviuos da população
         self.individuos = [Individuo() for i in range(self.n_ind)]
+        self.elite = Individuo(self.get_best_or_worst().bits)
 
-    def get_best(self) -> Individuo:
+    def get_best_or_worst(self, best: bool = True) -> Individuo:
         """
-        :return: O melhor individuo da população com base no fitness (Quanto menor, melhor)
+        :best: Flag que indica se é para buscar o melhor ou o pior individuo
+        :return: O melhor ou pior individuo da população com base no fitness (Quanto menor, melhor)
         """
 
-        best = self.individuos[0]
+        aux = self.individuos[0]
         for ind in self.individuos[1:]:
-            best = ind if ind.fitness <= best.fitness else best
+            if best:
+                aux = ind if ind.fitness <= aux.fitness else aux
+            else:
+                aux = ind if ind.fitness >= aux.fitness else aux
 
-        return best
+        return aux
+
+    def __apply_elite(self):
+        temp_best = self.get_best_or_worst()
+        if temp_best.fitness <= self.elite.fitness:
+            self.elite = Individuo(temp_best.bits)
+
+        # Se o pior individuo tiver o fitness pior que o da elite
+        # Coloca a elite no lugar dele
+        else:
+            worst = self.get_best_or_worst(False)
+            if worst.fitness > self.elite.fitness:
+                idx = self.individuos.index(worst)
+                self.individuos[idx] = self.elite
 
     def select(self):
         """
@@ -29,17 +48,16 @@ class Populacao(object):
         inds_selected = []
         for i in range(self.n_ind):
             # Escolhe aleatoriamente 2 individuos
-            r1 = random.randint(0, self.n_ind - 1)
-            r2 = random.randint(0, self.n_ind - 1)
-
-            ind1 = self.individuos[r1]
-            ind2 = self.individuos[r2]
+            ind1 = random.choice(self.individuos)
+            ind2 = random.choice(self.individuos)
 
             # O Individuo selecionado será o de menor fitness
             inds_selected.append(ind1 if ind1.fitness <= ind2.fitness else ind2)
 
         # Muda os individuos para os que foram selecionados
         self.individuos = inds_selected
+
+        self.__apply_elite()
 
     def make_crossover(self):
         """
@@ -53,11 +71,8 @@ class Populacao(object):
             tax = random.randint(0, 100)
 
             # Escolhe aleatoriamente 2 individuos
-            r1 = random.randint(0, self.n_ind - 1)
-            r2 = random.randint(0, self.n_ind - 1)
-
-            ind1 = self.individuos[r1]
-            ind2 = self.individuos[r2]
+            ind1 = random.choice(self.individuos)
+            ind2 = random.choice(self.individuos)
 
             # Se a taxa for menor que 60%
             if tax <= 60:
@@ -65,8 +80,8 @@ class Populacao(object):
                 cut_pos = random.randint(1, Individuo.n_bits - 2)
 
                 # Gera os bits
-                bits1 = ind1.bits[:cut_pos] + ind2.bits[cut_pos:]
-                bits2 = ind2.bits[:cut_pos] + ind1.bits[cut_pos:]
+                bits1 = ind1._bits[:cut_pos] + ind2._bits[cut_pos:]
+                bits2 = ind2._bits[:cut_pos] + ind1._bits[cut_pos:]
 
                 # Gera os filhos
                 children.append(Individuo(bits1))
@@ -79,6 +94,8 @@ class Populacao(object):
         # Muda os individuos para os filhos gerados
         self.individuos = children
 
+        self.__apply_elite()
+
     def apply_mutation(self):
         """
         Aplica mutação bit a bit nos individuos
@@ -88,12 +105,14 @@ class Populacao(object):
         for ind in self.individuos:
             new_bits = ""
 
-            for bit in ind.bits:
+            for bit in ind._bits:
                 # Sorteia uma taxa entre 0% e 100%
                 tax = random.randint(0, 100)
 
                 # Se a taxa for menor ou igual a 1%, sorteia um novo bit, senão mantém o bit atual
-                new_bits += str(random.randint(0, 1)) if tax <= 1 else bit
+                new_bits += str(0 if bit == 1 else 1) if tax <= 1 else bit
 
             # Troca os bits do individuos
-            ind.set_bits(new_bits)
+            ind.bits = new_bits
+
+        self.__apply_elite()

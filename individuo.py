@@ -13,24 +13,24 @@ class Individuo(object):
         else:
             self.bits = bits
 
-        # Faz pré cálculo as informações do individuo
-        self.x = int(self.bits, 2)              # Calcula o valor na base 10
-        self.x_normalized = self.__normalize()  # Valor normalizado para dentro do dominio
-        self.fitness = self.__calc_fitness()    # Calcula o fitness
+    @property
+    def bits(self):
+        return self._bits
 
-    def set_bits(self, bits: str):
+    @bits.setter
+    def bits(self, value: str):
         """
         :param bits: String com os bits
         :return: Nada
         """
 
         # Valida se a quantidade de bits é a mesma que está definida no individuo
-        if len(bits) != self.n_bits:
+        if len(value) != self.n_bits:
             raise Exception(f"Número de bits é inválido: Esperado - {self.n_bits}; Recebido - {len(bits)}")
 
         # Faz todos os calculos novamente para o novo valor de bits
-        self.bits = bits
-        self.x = int(self.bits, 2)
+        self._bits = value
+        self.x = int(self._bits, 2)
         self.x_normalized = self.__normalize()
         self.fitness = self.__calc_fitness()
 
@@ -56,5 +56,7 @@ class Individuo(object):
         return self.x_normalized ** 2 - 3 * self.x_normalized + 4
 
     def __repr__(self):
-        return f'Bits = {self.bits};X = {self.x};X_normalizado = {self.x_normalized};Fitness = {self.fitness}'
+        return f'Bits = {self._bits};X = {self.x};X_normalizado = {self.x_normalized};Fitness = {self.fitness}'
 
+    def __eq__(self, item):
+        return item.bits == self.bits

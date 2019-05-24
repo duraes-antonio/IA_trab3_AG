@@ -1,6 +1,7 @@
 import os
 from matplotlib import pyplot as pl
 
+from individuo import Individuo
 from populacao import Populacao
 
 
@@ -26,7 +27,11 @@ for t in range(1, 11):
             populacao.select()
             populacao.make_crossover()
             populacao.apply_mutation()
-            best = populacao.get_best()
+
+            best = Individuo(populacao.elite.bits)
+            if len(bests[-1][max_generations]) != 0 and best.fitness > bests[-1][max_generations][-1]:
+                print("Eita porra3!")
+                print(f"{t}i_{max_generations}g")
 
             # Escreve no arquivo e adiciona o melhor fitness na estrutura
             arq.write(f"{i+1};{best}\n")

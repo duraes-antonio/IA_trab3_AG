@@ -38,7 +38,7 @@ class Populacao(object):
             worst = self.get_best_or_worst(False)
             if worst.fitness > self.elite.fitness:
                 idx = self.individuos.index(worst)
-                self.individuos[idx] = self.elite
+                self.individuos[idx] = Individuo(self.elite.bits)
 
     def select(self):
         """

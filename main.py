@@ -29,9 +29,6 @@ for t in range(1, 11):
             populacao.apply_mutation()
 
             best = Individuo(populacao.elite.bits)
-            if len(bests[-1][max_generations]) != 0 and best.fitness > bests[-1][max_generations][-1]:
-                print("Eita porra3!")
-                print(f"{t}i_{max_generations}g")
 
             # Escreve no arquivo e adiciona o melhor fitness na estrutura
             arq.write(f"{i+1};{best}\n")

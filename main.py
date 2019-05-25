@@ -10,6 +10,7 @@ bests = []          # Estrutura para armazenar os melhores fitness de cada execu
 taxa_mutacao = 1
 taxa_crossover = 60
 n_individuos = 4
+n_bits = 10
 
 def main():
 
@@ -31,14 +32,14 @@ def main():
 			arq = open(f"{diretorio}/{Populacao.n_ind}i_{max_generations}g_{t}exec.csv", "wt")
 
 			# Gera população
-			populacao = Populacao(taxa_mutacao, taxa_crossover, n_individuos)
+			populacao = Populacao(taxa_mutacao, taxa_crossover, n_individuos, n_bits)
 
 			for i in range(max_generations):
 				populacao.select()
 				populacao.make_crossover()
 				populacao.apply_mutation()
 
-				best = Individuo(populacao.elite.bits)
+				best = Individuo(populacao.elite.bits, n_bits)
 
 				if best_x[max_generations] is None or best_x[max_generations][0].fitness > best.fitness:
 					best_x[max_generations] = (best, t)

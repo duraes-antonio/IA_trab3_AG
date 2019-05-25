@@ -7,15 +7,17 @@ class Populacao(object):
 	n_ind = 4
 	elite = None
 
-	def __init__(self, tx_mutacao: int, tx_cross: int, n_individ: int = None):
+	def __init__(self, tx_mutacao: int, tx_cross: int, n_individ: int,
+	             n_bits: int, interv_min: int = None, interv_max: int = None):
 
 		if(n_individ): self.n_ind = n_individ
 
 		# Gera os indiviuos da população
-		self.individuos: [Individuo] = [Individuo() for i in range(self.n_ind)]
-		self.elite = Individuo(self.get_best_or_worst().bits)
 		self.__taxa_mut = tx_mutacao
 		self.__taxa_cross = tx_cross
+		self.__n_bits = n_bits
+		self.individuos: [Individuo] = [Individuo(n_bits=n_bits) for i in range(self.n_ind)]
+		self.elite = Individuo(self.get_best_or_worst().bits, self.__n_bits)
 
 	def get_best_or_worst(self, best: bool = True) -> Individuo:
 		"""
@@ -35,7 +37,7 @@ class Populacao(object):
 		temp_best = self.get_best_or_worst()
 
 		if temp_best.fitness <= self.elite.fitness:
-			self.elite = Individuo(temp_best.bits)
+			self.elite = Individuo(temp_best.bits, self.__n_bits)
 
 		# Se o pior individuo tiver o fitness pior que o da elite
 		# Coloca a elite no lugar dele
@@ -44,7 +46,7 @@ class Populacao(object):
 
 			if worst.fitness > self.elite.fitness:
 				idx = self.individuos.index(worst)
-				self.individuos[idx] = Individuo(self.elite.bits)
+				self.individuos[idx] = Individuo(self.elite.bits, self.__n_bits)
 
 	def select(self):
 		"""
@@ -92,8 +94,8 @@ class Populacao(object):
 				bits2 = ind2.bits[:cut_pos] + ind1.bits[cut_pos:]
 
 				# Gera os filhos
-				children.append(Individuo(bits1))
-				children.append(Individuo(bits2))
+				children.append(Individuo(bits1, self.__n_bits))
+				children.append(Individuo(bits2, self.__n_bits))
 
 			else:
 				# Adiciona os pais como filhos

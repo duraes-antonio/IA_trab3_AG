@@ -4,7 +4,7 @@ from individuo import Individuo
 
 
 class Populacao(object):
-    n_ind = 10
+    n_ind = 4
     elite = None
 
     def __init__(self):

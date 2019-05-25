@@ -13,7 +13,9 @@ if not os.path.exists(diretorio):
     os.makedirs(diretorio)
 
 num_exec = 10
-generations = [5, 20]
+generations = [5, 10]
+
+best_x = {generation: None for generation in generations}
 
 # Para cada execução
 for t in range(1, num_exec + 1):
@@ -32,6 +34,9 @@ for t in range(1, num_exec + 1):
             populacao.apply_mutation()
 
             best = Individuo(populacao.elite.bits)
+
+            if best_x[max_generations] is None or best_x[max_generations][0].fitness > best.fitness:
+                best_x[max_generations] = (best, t)
 
             # Escreve no arquivo e adiciona o melhor fitness na estrutura
             arq.write(f"{i+1};{best}\n")
@@ -66,5 +71,9 @@ for generation in generations:
     # Marque os valores de fitness, forma destacada (em vermelho) no gráfico
     for i in range(len(media)):
         pl.text(val_eixo_x[i], media[i], f"{media[i]:.5}", color="red", fontsize=10)
+
+    pl.text(1, media[-1], f"{best_x[generation][0].x_normalized}", color="blue", fontsize=10)
+
+    print(f"Arquivo com melhor x para {generation} gerações = {Populacao.n_ind}i_{generation}g_{best_x[generation][1]}exec.csv")
 
     pl.show()

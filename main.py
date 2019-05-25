@@ -7,7 +7,7 @@ from populacao import Populacao
 
 diretorio = "CSVs"  # Diretório em que serão salvo os arquivos
 bests = []          # Estrutura para armazenar os melhores fitness de cada execução para cada geração
-taxa_mutacao = 50
+taxa_mutacao = 1
 taxa_crossover = 60
 n_individuos = 4
 

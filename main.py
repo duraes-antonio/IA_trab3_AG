@@ -7,73 +7,82 @@ from populacao import Populacao
 
 diretorio = "CSVs"  # Diretório em que serão salvo os arquivos
 bests = []          # Estrutura para armazenar os melhores fitness de cada execução para cada geração
+taxa_mutacao = 50
+taxa_crossover = 60
+n_individuos = 4
 
-# Cria pasta se não existir
-if not os.path.exists(diretorio):
-    os.makedirs(diretorio)
+def main():
 
-num_exec = 10
-generations = [5, 10]
+	# Cria pasta se não existir
+	if not os.path.exists(diretorio):
+		os.makedirs(diretorio)
 
-best_x = {generation: None for generation in generations}
+	num_exec = 10
+	generations = [5, 10]
 
-# Para cada execução
-for t in range(1, num_exec + 1):
-    bests.append({generation: [] for generation in generations})   # Cria as listas da execução de cada número de gerações máximas
+	best_x = {generation: None for generation in generations}
 
-    for max_generations in generations:
-        # Abre arquivo
-        arq = open(f"{diretorio}/{Populacao.n_ind}i_{max_generations}g_{t}exec.csv", "wt")
+	# Para cada execução
+	for t in range(1, num_exec + 1):
+		bests.append({generation: [] for generation in generations})   # Cria as listas da execução de cada número de gerações máximas
 
-        # Gera população
-        populacao = Populacao()
+		for max_generations in generations:
+			# Abre arquivo
+			arq = open(f"{diretorio}/{Populacao.n_ind}i_{max_generations}g_{t}exec.csv", "wt")
 
-        for i in range(max_generations):
-            populacao.select()
-            populacao.make_crossover()
-            populacao.apply_mutation()
+			# Gera população
+			populacao = Populacao(taxa_mutacao, taxa_crossover, n_individuos)
 
-            best = Individuo(populacao.elite.bits)
+			for i in range(max_generations):
+				populacao.select()
+				populacao.make_crossover()
+				populacao.apply_mutation()
 
-            if best_x[max_generations] is None or best_x[max_generations][0].fitness > best.fitness:
-                best_x[max_generations] = (best, t)
+				best = Individuo(populacao.elite.bits)
 
-            # Escreve no arquivo e adiciona o melhor fitness na estrutura
-            arq.write(f"{i+1};{best}\n")
-            bests[-1][max_generations].append(best.fitness)
+				if best_x[max_generations] is None or best_x[max_generations][0].fitness > best.fitness:
+					best_x[max_generations] = (best, t)
 
-        arq.close()
+				# Escreve no arquivo e adiciona o melhor fitness na estrutura
+				arq.write(f"{i+1};{best}\n")
+				bests[-1][max_generations].append(best.fitness)
 
-# Estrutura que armazena a soma de cada geração de cada execução
-fitness_sum = {generation: [0] * generation for generation in generations}
+			arq.close()
 
-# Faz as somas
-for best_exec in bests:
-    for generation in generations:
-        for i in range(generation):
-            fitness_sum[generation][i] += best_exec[generation][i]
+	# Estrutura que armazena a soma de cada geração de cada execução
+	fitness_sum = {generation: [0] * generation for generation in generations}
 
+	# Faz as somas
+	for best_exec in bests:
+		for generation in generations:
+			for i in range(generation):
+				fitness_sum[generation][i] += best_exec[generation][i]
 
-# Calcula médias e plota
-for generation in generations:
-    media = []
-    for i in range(generation):
-        media.append(fitness_sum[generation][i] / num_exec)
+	# Calcula médias e plota
+	for generation in generations:
+		media = []
 
-    val_eixo_x = [i for i in range(1, generation + 1)]
+		for i in range(generation):
+			media.append(fitness_sum[generation][i] / num_exec)
 
-    pl.plot(val_eixo_x, media, marker='o')
+		val_eixo_x = [i for i in range(1, generation + 1)]
 
-    # Nomeie os eixos X e Y
-    pl.xlabel("Número da geração")
-    pl.ylabel("Fitness i-ésimo individuo")
+		pl.plot(val_eixo_x, media, marker='o')
 
-    # Marque os valores de fitness, forma destacada (em vermelho) no gráfico
-    for i in range(len(media)):
-        pl.text(val_eixo_x[i], media[i], f"{media[i]:.5}", color="red", fontsize=10)
+		# Nomeie os eixos X e Y
+		pl.xlabel("Número da geração")
+		pl.ylabel("Fitness i-ésimo individuo")
 
-    pl.text(1, media[-1], f"{best_x[generation][0].x_normalized}", color="blue", fontsize=10)
+		# Marque os valores de fitness, forma destacada (em vermelho) no gráfico
+		for i in range(len(media)):
+			pl.text(val_eixo_x[i], media[i], f"{media[i]:.5}", color="red", fontsize=10)
 
-    print(f"Arquivo com melhor x para {generation} gerações = {Populacao.n_ind}i_{generation}g_{best_x[generation][1]}exec.csv")
+		pl.text(1, media[-1], f"{best_x[generation][0].x_normalized}", color="blue", fontsize=10)
 
-    pl.show()
+		print(f"Arquivo com melhor x para {generation} gerações = {Populacao.n_ind}i_{generation}g_{best_x[generation][1]}exec.csv")
+
+		pl.show()
+
+	return 0
+
+main()

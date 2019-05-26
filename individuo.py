@@ -5,7 +5,6 @@ class Individuo(object):
 	"""Representa um indivíduo biológico com código genético e valor de aptdão."""
 	dMax = 10
 	dMin = -10
-	n_bits = 10
 
 	def __init__(self, n_bits: int, bits: str = None):
 		"""Instancia um indivíduo novo ou a partir de um código genético existente.
@@ -34,7 +33,7 @@ class Individuo(object):
 
 		# Faz todos os calculos novamente para o novo valor de bits
 		self.__bits = value
-		self.x = int(self.bits, 2)
+		self.x = int(self.__bits, 2)
 		self.x_normalized = self.__normalize()
 		self.fitness = self.__calc_fitness()
 

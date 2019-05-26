@@ -101,7 +101,7 @@ class Populacao(object):
 			# Se a taxa estiver no valor aceitável
 			if tax <= self.__taxa_cross:
 				# Sorteia a posição de corte
-				cut_pos = randint(1, Individuo.n_bits - 2)
+				cut_pos = randint(1, self.__n_bits - 2)
 
 				# Gera os bits
 				bits1 = ind1.bits[:cut_pos] + ind2.bits[cut_pos:]

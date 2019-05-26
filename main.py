@@ -16,13 +16,14 @@ parser.add_argument("-c", "--crossover", help="Taxa de crossover (inteiro entre 
                     type=int, required=True)
 argumentos = parser.parse_args()
 
-n_individuos = argumentos.individuo
+n_indiv = argumentos.individuo
 taxa_mutacao = argumentos.mutacao
 taxa_crossover = argumentos.crossover
 n_bits = 10
 
 
 def main():
+	padrao_print = "Arquivo com melhor x para {} gerações = {}i_{}g_{}exec.csv"
 	diretorio = "CSVs"  # Diretório em que serão salvo os arquivos
 	bests = []  # Estrutura para armazenar os melhores fitness de cada execução para cada geração
 
@@ -44,10 +45,10 @@ def main():
 		for max_generations in generations:
 
 			# Abre arquivo
-			arq = open(f"{diretorio}/{Populacao.n_ind}i_{max_generations}g_{t}exec.csv", "wt")
+			arq = open(f"{diretorio}/{n_indiv}i_{max_generations}g_{t}exec.csv", "wt")
 
 			# Gera população
-			populacao = Populacao(taxa_mutacao, taxa_crossover, n_individuos, n_bits)
+			populacao = Populacao(taxa_mutacao, taxa_crossover, n_indiv, n_bits)
 
 			for i in range(max_generations):
 				populacao.select()
@@ -95,8 +96,7 @@ def main():
 
 		pl.text(1, media[-1], f"{best_x[generation][0].x_normalized}", color="blue", fontsize=10)
 
-		print(
-			f"Arquivo com melhor x para {generation} gerações = {Populacao.n_ind}i_{generation}g_{best_x[generation][1]}exec.csv")
+		print(padrao_print.format(generation, n_indiv, generation, best_x[generation][1]))
 
 		pl.show()
 

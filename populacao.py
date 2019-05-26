@@ -1,27 +1,41 @@
 from random import randint, choice
-
 from individuo import Individuo
 
 
 class Populacao(object):
-	n_ind = 4
+	"""Representa um conjunto de indivíduos.
+	Contém operações de seleção, crossover e mutação."""
 	elite = None
+	n_ind = 4
 
 	def __init__(self, tx_mutacao: int, tx_cross: int, n_individ: int,
 	             n_bits: int, interv_min: int = None, interv_max: int = None):
+		"""
+		Instancia uma população com N indivíduos e com as taxas recebidas.
 
-		if(n_individ): self.n_ind = n_individ
+		:param tx_mutacao: Inteiro (entre 0 e 100) que representa a chance de um bit ser alterado.
+		:param tx_cross: Inteiro (entre 0 e 100) que representa a chance de ocorrer um crossover.
+		:param n_individ: Inteiro positivo. É a quantidade de indivíduos da população.
+		:param n_bits: Inteiro positivo. É o tamanho da cadeia genética de cada indivíduo.
+		:param interv_min: Valor real que representa o valor mínimo que um código genético pode assumir.
+		:param interv_max: Valor real que representa o valor máximo que um código genético pode assumir.
+		"""
 
-		# Gera os indiviuos da população
+		# Atualize as propriedades com os valores recebidos
+		self.n_ind = n_individ
 		self.__taxa_mut = tx_mutacao
 		self.__taxa_cross = tx_cross
 		self.__n_bits = n_bits
+
+		# Gera os indiviuos da população
 		self.individuos: [Individuo] = [Individuo(n_bits=n_bits) for i in range(self.n_ind)]
-		self.elite = Individuo(self.get_best_or_worst().bits, self.__n_bits)
+		self.elite = Individuo(self.__n_bits, self.get_best_or_worst().bits)
 
 	def get_best_or_worst(self, best: bool = True) -> Individuo:
 		"""
-		:best: Flag que indica se é para buscar o melhor ou o pior individuo
+		Retorna o indivíduo mais adaptado ou menos adaptado.
+
+		:param best: Se True, indica que deseja-se o melhor indivíduo, senão, o pior.
 		:return: O melhor ou pior individuo da população com base no fitness (Quanto menor, melhor)
 		"""
 
@@ -37,7 +51,7 @@ class Populacao(object):
 		temp_best = self.get_best_or_worst()
 
 		if temp_best.fitness <= self.elite.fitness:
-			self.elite = Individuo(temp_best.bits, self.__n_bits)
+			self.elite = Individuo(self.__n_bits, temp_best.bits)
 
 		# Se o pior individuo tiver o fitness pior que o da elite
 		# Coloca a elite no lugar dele
@@ -46,7 +60,7 @@ class Populacao(object):
 
 			if worst.fitness > self.elite.fitness:
 				idx = self.individuos.index(worst)
-				self.individuos[idx] = Individuo(self.elite.bits, self.__n_bits)
+				self.individuos[idx] = Individuo(self.__n_bits, self.elite.bits)
 
 	def select(self):
 		"""
@@ -76,7 +90,7 @@ class Populacao(object):
 
 		children: [Individuo] = []
 
-		while len(children) != self.n_ind:
+		while len(children) <= self.n_ind:
 			# Sorteia a taxa de crossover de 0% a 100%
 			tax = randint(0, 100)
 
@@ -94,8 +108,8 @@ class Populacao(object):
 				bits2 = ind2.bits[:cut_pos] + ind1.bits[cut_pos:]
 
 				# Gera os filhos
-				children.append(Individuo(bits1, self.__n_bits))
-				children.append(Individuo(bits2, self.__n_bits))
+				children.append(Individuo(self.__n_bits, bits1))
+				children.append(Individuo(self.__n_bits, bits2))
 
 			else:
 				# Adiciona os pais como filhos

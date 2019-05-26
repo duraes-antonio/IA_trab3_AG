@@ -2,13 +2,18 @@ import random
 
 
 class Individuo(object):
+	"""Representa um indivíduo biológico com código genético e valor de aptdão."""
 	dMax = 10
 	dMin = -10
 	n_bits = 10
 
-	def __init__(self, bits: str = None, n_bits: int = None):
+	def __init__(self, n_bits: int, bits: str = None):
+		"""Instancia um indivíduo novo ou a partir de um código genético existente.
 
-		if (n_bits): self.n_bits = n_bits
+		:param bits: Código genético de um indivíduo já existente.
+		"""
+
+		self.n_bits = n_bits
 
 		# Senão informar os bits, eles são gerados
 		self.bits = bits if bits else self.__generate_bits()

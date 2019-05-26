@@ -1,18 +1,30 @@
-import os
-from matplotlib import pyplot as pl
-
+from util import instalar_matplotlib
 from individuo import Individuo
 from populacao import Populacao
+import os, argparse
 
+instalar_matplotlib()
 
-diretorio = "CSVs"  # Diretório em que serão salvo os arquivos
-bests = []          # Estrutura para armazenar os melhores fitness de cada execução para cada geração
-taxa_mutacao = 1
-taxa_crossover = 60
-n_individuos = 4
+from matplotlib import pyplot as pl
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--individuo", help="Número de indivíduos em uma população",
+                    type=int, required=True)
+parser.add_argument("-m", "--mutacao", help="Taxa de mutação (inteiro entre 1 e 100)",
+                    type=int, required=True)
+parser.add_argument("-c", "--crossover", help="Taxa de crossover (inteiro entre 1 e 100)",
+                    type=int, required=True)
+argumentos = parser.parse_args()
+
+n_individuos = argumentos.individuo
+taxa_mutacao = argumentos.mutacao
+taxa_crossover = argumentos.crossover
 n_bits = 10
 
+
 def main():
+	diretorio = "CSVs"  # Diretório em que serão salvo os arquivos
+	bests = []  # Estrutura para armazenar os melhores fitness de cada execução para cada geração
 
 	# Cria pasta se não existir
 	if not os.path.exists(diretorio):
@@ -25,9 +37,12 @@ def main():
 
 	# Para cada execução
 	for t in range(1, num_exec + 1):
-		bests.append({generation: [] for generation in generations})   # Cria as listas da execução de cada número de gerações máximas
+
+		# Cria as listas da execução de cada número de gerações máximas
+		bests.append({generation: [] for generation in generations})
 
 		for max_generations in generations:
+
 			# Abre arquivo
 			arq = open(f"{diretorio}/{Populacao.n_ind}i_{max_generations}g_{t}exec.csv", "wt")
 
@@ -39,9 +54,9 @@ def main():
 				populacao.make_crossover()
 				populacao.apply_mutation()
 
-				best = Individuo(populacao.elite.bits, n_bits)
+				best = Individuo(n_bits, populacao.elite.bits)
 
-				if best_x[max_generations] is None or best_x[max_generations][0].fitness > best.fitness:
+				if not best_x[max_generations] or best_x[max_generations][0].fitness > best.fitness:
 					best_x[max_generations] = (best, t)
 
 				# Escreve no arquivo e adiciona o melhor fitness na estrutura
@@ -80,10 +95,12 @@ def main():
 
 		pl.text(1, media[-1], f"{best_x[generation][0].x_normalized}", color="blue", fontsize=10)
 
-		print(f"Arquivo com melhor x para {generation} gerações = {Populacao.n_ind}i_{generation}g_{best_x[generation][1]}exec.csv")
+		print(
+			f"Arquivo com melhor x para {generation} gerações = {Populacao.n_ind}i_{generation}g_{best_x[generation][1]}exec.csv")
 
 		pl.show()
 
 	return 0
+
 
 main()

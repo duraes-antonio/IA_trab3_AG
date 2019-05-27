@@ -419,3 +419,11 @@ Tabela 2: Resultados para X (binário, decimal e normalizado) com 4 bits<br>
 
 <p align="justify"/>
 O aumento excessivo do tamanho da cadeia de bits é um erro, pois a precisão aumenta de tal forma que a diferença entre um valor e seu seguinte é pouco sensível ao domínio da função. Para uma cadeia de 20 bits, por exemplo, a diferença entre um valor Xi e seu Xi+1 é de 1.9073504518019035e-05.
+
+## 6. REFERÊNCIAS E OUTROS MATERIAIS BASE
+
+[1]. Página 43. Acesso em 25/05/2019. Disponível em:
+http://revista.pgsskroton.com.br/index.php/rcext/article/view/2394/2298
+
+[2]. Página 2. Acesso em 25/05/2019. Disponível em:
+http://www.fsma.edu.br/si/edicao3/aplicacoes_de_alg_geneticos.pdf

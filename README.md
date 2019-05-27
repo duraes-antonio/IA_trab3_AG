@@ -46,9 +46,7 @@ Após plotar o gráfico 2D da função acima na ferramenta Geogebra, fica claro 
 
 ## 3. IMPLEMENTAÇÃO
 
-### 3.1 Modelagem
-
-### 3.1.1 Indivíduo
+### 3.1 Indivíduo
 
 *Modelagem: Cada indivíduo foi modelado como uma classe contendo seu número de bits (comprimento de seu cromossomo), a cadeia de bit em si, um valor máximo e um valor mínimo de aptidão.*
 
@@ -61,7 +59,7 @@ class Individuo(object):
   dMin = -10  # Valor mínimo dentro do domínio da função
 ```
 
-*Instanciação: Para instanciar um indivíduo é necessário pasar o tamanho de sua cadeia genética. Também é possível passar uma cadeia genética já existente, para 'clonar' um indivíduo.*
+*Instanciação: Para instanciar um indivíduo é necessário passar o tamanho de sua cadeia genética. Também é possível passar uma cadeia genética já existente, para 'clonar' um indivíduo.*
 ```Python
   def __init__(self, n_bits: int, bits: str = None):
     """Instancia um indivíduo novo ou a partir de um código genético existente."""
@@ -76,13 +74,13 @@ class Individuo(object):
 ```Python
   def __generate_bits(self) -> str:
     """
-    :return: String de tamanho Individuo.n_bits com cada caracter podendo ser 0 ou 1
+    :return: String de tamanho Individuo.n_bits com cada caractere podendo ser 0 ou 1
     """
     return "".join([str(random.randint(0, 1)) for i in range(self.n_bits)])
 ```
 <br>
 
-### 3.1.2 População
+### 3.2 População
 
 *Modelagem: A população ficou responsável por armazenar informações como o número de indivíduos, a taxa de mutação, taxa de crossover, além de armazenar o melhor (indivíduo elitizado) a cada geração.*
 ```Python
@@ -138,14 +136,14 @@ class Populacao(object):
 *Seleção: O processo de seleção utiliza a técnica de torneio, ou seja, N indivíduos (neste caso, n = 2) são sorteados e o que for mais apto permanece na população. O processo ocorre K (número de indivíduos na população) vezes.*
 ```Python
   def select(self):
-    """Seleciona os melhores individuos usando método de torneio com n = 2"""
+    """Seleciona os melhores indivíduos usando método de torneio com n = 2"""
 
     inds_selected = []
     
     # Para i, de 0 até o número de indivíduos
     for i in range(self.n_ind):
 
-      # Escolha aleatoriamente 2 individuos
+      # Escolha aleatoriamente 2 indivíduos
       ind1 = choice(self.individuos)
       ind2 = choice(self.individuos)
 
@@ -159,10 +157,10 @@ class Populacao(object):
     self.__apply_elite()
 ```
 
-*Crossover: O processo de cruzamento é responsável por gerar novos indivíduos a partir de dois indivíduos pais. Alé da taxa de crossover, o ponto onde o DNA dos pais é cortado define significativamente a aptidão do indivíduo filho.*
+*Crossover: O processo de cruzamento é responsável por gerar novos indivíduos a partir de dois indivíduos pais. Além da taxa de crossover, o ponto onde o DNA dos pais é cortado define significativamente a aptidão do indivíduo filho.*
 ```Python
   def make_crossover(self):
-    """Faz crossover entre individuos pelo método de 1 corte"""
+    """Faz crossover entre indivíduos pelo método de 1 corte"""
 
     children: [Individuo] = []
 
@@ -171,7 +169,7 @@ class Populacao(object):
       # Sorteia a taxa de crossover de 0% a 100%
       tax = randint(0, 100)
 
-      # Escolhe aleatoriamente 2 individuos
+      # Escolhe aleatoriamente 2 indivíduos
       ind1: Individuo = choice(self.individuos)
       ind2: Individuo = choice(self.individuos)
 
@@ -196,7 +194,7 @@ class Populacao(object):
         children.append(ind1)
         children.append(ind2)
 
-    # Muda os individuos para os filhos gerados
+    # Muda os indivíduos para os filhos gerados
     self.individuos = children
 
     self.__apply_elite()
@@ -221,13 +219,11 @@ class Populacao(object):
     self.__apply_elite()
 ```
 
-### 3.2 Função principal
-
-*Modelagem: Cada indivíduo foi modelado como uma classe contendo seu número de bits (comprimento de seu cromossomo), a cadeia de bit em si, um valor máximo e um valor mínimo de aptidão.*
+### 3.3 Função principal
 
 ```Python
 def main():
-	padrao_print = "Arquivo com melhor x para {} gerações = {}i_{}g_{}exec.csv"
+  padrao_print = "Arquivo com melhor x para {} gerações = {}i_{}g_{}exec.csv"
   diretorio = "CSVs"  # Diretório em que serão salvo os arquivos
   bests = []  # Estrutura para armazenar os melhores fitness de cada execução para cada geração
   num_exec = 10
@@ -337,4 +333,89 @@ Cada linha do arquivo contém o número da geração, os bits do indivíduo mais
 
 ## 5. RESULTADOS E OBSERVAÇÕES
 
-....
+<p align="justify"/>
+Embora a natureza do algoritmo seja randômica, isto é, para cada execução pode resultar em alto ou baixo sucesso; para fins de simples comparação, abaixo no gráfico 2 é possível ver o resultado de uma chamada com 10 execuções e 5 gerações.
+
+<p align="center"/>
+Gráfico 2: Resultado com 4 indivíduos, 1% de chance de mutação, 60% de crossover, 5 gerações e 10 execuções.
+<img src="https://github.com/duraes-antonio/IA_trab3_AG/blob/master/doc/imgs/execucao_4i_1m_5g_10exec.svg" width="700">
+
+<p align="justify"/>
+Já no gráfico 3 é possível ver o resultado de uma chamada com 10 execuções e 10 gerações.
+
+<p align="center">
+Gráfico 3: Resultado com 4 indivíduos, 1% de chance de mutação, 60% de crossover, 10 gerações e 10 execuções.
+<img src="https://github.com/duraes-antonio/IA_trab3_AG/blob/master/doc/imgs/execucao_4i_1m_10g_10exec.svg" width="700">
+</p>
+
+<p align="justify"/>
+Nota-se que o aumento do número de gerações com a mesma quantidade de indivíduos e taxa de mutação não resultou em melhorias significativas.
+
+### 5.1 Relação: Tamanho da população e precisão
+
+<p align="justify"/>
+O gráfico 4 indica que além começar mais próximo do fitness final (1.75), a melhoria absoluta vista entre a primeira geração e a última é de 0.9872 (5.7213 – 4.7341).
+
+<p align="justify"/>
+Tal êxito pode ter sido alcançado devido ao aumento de chance de um dos indivíduos ser gerado com código genético próximo ao objetivo. Com 8 indivíduos e o fator de aleatoriamente, dobra-se a chance de a cada geração um indivíduo nascer com genética propensa ao valor adequado para x, que é de 1.5.
+
+<p align="center"/>
+Gráfico 4: Resultado com 8 indivíduos, 1% de chance de mutação, 60% de crossover, 5 gerações e 10 execuções.
+<img src="https://github.com/duraes-antonio/IA_trab3_AG/blob/master/doc/imgs/execucao_8i_1m_5g_10exec.svg" width="550">
+</p>
+
+<p align="justify"/>
+O gráfico 5 ratifica a hipótese do indivíduo nascer próximo ao resultado final (1.75), com a primeira geração já obtendo indivíduos próximo ao fitness de valor 2. 
+
+<p align="center">
+Gráfico 5: Resultado com 8 indivíduos, 1% de chance de mutação, 60% de crossover, 10 gerações e 10 execuções.
+<img src="https://github.com/duraes-antonio/IA_trab3_AG/blob/master/doc/imgs/execucao_8i_1m_10g_10exec.svg" width="550">
+</p>
+
+### 5.2 Relação: Taxa de mutação e precisão
+
+<p align="justify"/>
+A alteração da taxa de mutação é o segundo fator que acelera a convergência do algoritmo. Tal acréscimo implica no aumento da variabilidade genética dos indivíduos, o que possibilita que indivíduos menos aptos sofram modificações que te tornem mais assertivos às condições, ou na prática, com a cadeia de bits resultando em fitness mais próxima de 1.75.
+
+<p align="justify"/>
+A mutação permite também que indivíduos nascidos aptos tornem-se pouco promissores, o que ocasionaria picos no gráfico, algo que só não ocorre porque o processo de elitização garante sempre haverá o melhor indivíduo na população, e este só será substituído por um mais apto que ele.
+
+<p align="justify"/>
+No gráfico 6, com uso de 5% de mutação, é possível perceber que na primeira geração há indivíduos mais promissores que na chamada que utilizou 1% de mutação. Também é possível notar a variação (de 1.719) entre a primeira geração e a última.
+
+<p align="center">
+Gráfico 6: Resultado com 4 indivíduos, 5% de chance de mutação, 60% de crossover, 5 gerações e 10 execuções.
+<img src="https://github.com/duraes-antonio/IA_trab3_AG/blob/master/doc/imgs/execucao_4i_5m_5g_10exec.svg" width="550">
+</p>
+
+<p align="justify"/>
+No gráfico 7, com 10 gerações, da primeira até a quinta geração, a variação é significativa e constante, a partir de então, a variação é reduzida. O salto da primeira até a última geração é de 2.619.
+
+<p align="center">
+Gráfico 7: Resultado com 4 indivíduos, 5% de chance de mutação, 60% de crossover, 10 gerações e 10 execuções.
+<img src="https://github.com/duraes-antonio/IA_trab3_AG/blob/master/doc/imgs/execucao_4i_5m_10g_10exec.svg" width="550">
+</p>
+
+### 5.3 Relação: Cadeia genética (número de bits) e precisão
+
+<p align="justify"/>
+O comprimento da cadeia genética e a convergência do algoritmo é uma das relações menos perceptíveis se trabalhada só, sem auxílio do aumento da taxa de mutação. Com o domínio de X variando entre 10 e -10, e auxílio da função de normalização é possível verificar que o aumento da quantidade de bits implica no aumento da precisão e faixa de valores possíveis para X.
+
+<p align="justify"/>
+Abaixo, na tabela 1, é possível conferir as possibilidades para um cromossomo com tamanho de 2 bits. Com 4 valores é fácil atingir o número (~3.33333) mais próximo de 1.5, só é necessário acertar 1 em 4 valores, isto é 25% chance. Contudo, pelo fato de sua precisão ser baixa, esta precisão será refletida no valor final encontrado, ou seja, o valor mais próximo, ~3.3333, apresenta alta variação se comparado ao 1.5.
+
+<p align="center">
+Tabela 1: Resultados para X (binário, decimal e normalizado) com 2 bits<br>
+<img src="https://github.com/duraes-antonio/IA_trab3_AG/blob/master/doc/imgs/tabela_1.png">
+</p>
+
+<p align="justify"/>
+Com 4 bits, há 16 possibilidades de valores para X, valores estes que oscilam entre 0 e 15. A chance de encontrar o valor mais próximo de 1.5 reduz de 25% para 6.25% (1/16), em contrapartida, além do valor mais próximo ser mais preciso, há um conjunto muito maior de valores intermediários, ou seja, a chance de encontrar o valor mais próximo do X desejado pode ser mais baixa, mas de encontrar valores próximos ao desejado aumentou.
+
+<p align="center">
+Tabela 2: Resultados para X (binário, decimal e normalizado) com 4 bits<br>
+<img src="https://github.com/duraes-antonio/IA_trab3_AG/blob/master/doc/imgs/tabela_2.png">
+</p>
+
+<p align="justify"/>
+O aumento excessivo do tamanho da cadeia de bits é um erro, pois a precisão aumenta de tal forma que a diferença entre um valor e seu seguinte é pouco sensível ao domínio da função. Para uma cadeia de 20 bits, por exemplo, a diferença entre um valor Xi e seu Xi+1 é de 1.9073504518019035e-05.
